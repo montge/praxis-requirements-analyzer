@@ -1,0 +1,28 @@
+{
+    "include": [
+        "src",
+        "notebooks"
+    ],
+    "exclude": [
+        "**/node_modules",
+        "**/__pycache__",
+        ".git"
+    ],
+    "ignore": [],
+    "defineConstant": {
+        "DEBUG": true
+    },
+    "venv": ".venv",
+    "reportMissingImports": true,
+    "reportMissingTypeStubs": false,
+    "pythonVersion": "3.12",
+    "pythonPlatform": "Linux",
+    "executionEnvironments": [
+        {
+            "root": "notebooks",
+            "extraPaths": [
+                "src"
+            ]
+        }
+    ]
+} 

@@ -1,0 +1,91 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "praxis-requirements-analyzer"
+version = "0.2.0"
+description = "A system for analyzing software requirements using LLMs, vector similarity, and graph databases"
+readme = "README.md"
+authors = [
+    {name = "Evan Montgomery-Recht", email = "montge@mianetworks.net"}
+]
+license = {text = "MIT"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.8"
+dependencies = [
+    # Core LLM and NLP
+    "langchain>=0.3.25",
+    "langchain-huggingface>=0.2.0",
+    "langchain-openai>=0.3.21",
+    "langchain-anthropic>=0.3.15",
+    "langchain-community>=0.3.24",
+    "langchain-experimental>=0.3.4",
+    "langgraph>=0.4.8",
+    "anthropic>=0.52.2",
+    "openai>=1.75.0",
+    "huggingface_hub>=0.32.4",
+    "sentence-transformers>=4.1.0",
+    "transformers>=4.52.4",
+    "torch>=2.7.0",
+    "spacy>=3.8.7",
+    "langdetect>=1.0.9",
+    "lm-format-enforcer>=0.10.11",
+    "vLLM>=0.9.0.1",
+    
+    # Database and storage
+    "redisvl>=0.7.0",
+    "neo4j>=5.28.1",
+    "redis>=6.2.0",
+    "aioneo4j>=0.0.5",
+    
+    # Data processing and utilities
+    "python-dotenv>=1.1.0",
+    "numpy>=2.2.6",
+    "pandas>=2.3.0",
+    "pydantic>=2.11.5",
+    "rich>=13.9.4",
+    "tenacity>=9.1.2",
+    "requests>=2.32.3",
+    "nest_asyncio>=1.6.0",
+    "tqdm>=4.67.1",
+    
+    # AI and automation
+    "crewai>=0.126.0",
+    
+    # Java parsing
+    "javalang>=0.13.0",
+    
+    # Notebook support
+    "nbimport>=0.0.0",
+    "jupytext>=1.17.2",
+    "import_ipynb>=0.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    # Testing
+    "pytest>=8.4.0",
+    
+    # Jupyter and notebooks
+    "jupyter>=1.1.1",
+    "ipykernel>=6.29.5",
+    "nbconvert[webpdf]>=7.16.6",
+    
+    # Data science and visualization
+    "scikit-learn>=1.7.0",
+    "seaborn>=0.13.2",
+    "matplotlib>=3.10.3",
+    "statsmodels>=0.14.4",
+    "xgboost>=3.0.2",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"] 
