@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "praxis-requirements-analyzer"
-version = "0.2.0"
+version = "0.2.1"
 description = "A system for analyzing software requirements using LLMs, vector similarity, and graph databases"
 readme = "README.md"
 authors = [
@@ -82,6 +82,13 @@ dev = [
     "matplotlib>=3.10.3",
     "statsmodels>=0.14.4",
     "xgboost>=3.0.2",
+
+    # Advanced statistical testing
+    "scipy>=1.13.0",
+    "arch>=6.4.0",
+    "pymc>=5.10.0",
+    "arviz>=0.18.0",
+    "bayesian-testing>=0.3.0",
 ]
 
 [tool.setuptools]
