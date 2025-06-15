@@ -1,8 +1,8 @@
 # src/neo4j/requirements_client.py
 
 from typing import Dict, List
-from ...utils.logger import setup_logger, handle_exception
-from ...models.requirement import Requirement
+from ..utils.logger import setup_logger, handle_exception
+from ..models.requirement import Requirement
 from .neo4j_client import Neo4jClient
 
 logger = setup_logger(__name__)

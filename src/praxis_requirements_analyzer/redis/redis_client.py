@@ -10,7 +10,7 @@ from .redis_schema import (
     get_target_requirements_schema,
     get_matches_schema
 )
-from ...utils.logger import setup_logger, handle_exception
+from ..utils.logger import setup_logger, handle_exception
 import time
 
 class RedisClient:

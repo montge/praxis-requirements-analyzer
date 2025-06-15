@@ -6,7 +6,7 @@ Provides abstract base class for different LLM providers.
 from abc import ABC, abstractmethod
 from typing import Dict, Any, Optional, List
 from langchain.schema import HumanMessage, SystemMessage
-from ...utils.logger import setup_logger
+from ..utils.logger import setup_logger
 
 class BaseLLM(ABC):
     """

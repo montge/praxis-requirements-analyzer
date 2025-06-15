@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Dict, Any
 from neo4j import Driver
-from ...utils.logger import setup_logger, handle_exception
+from ..utils.logger import setup_logger, handle_exception
 from datetime import datetime
 
 logger = setup_logger(__name__)

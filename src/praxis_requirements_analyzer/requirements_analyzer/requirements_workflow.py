@@ -22,9 +22,9 @@ import logging
 from typing import List, Dict, Any, Optional, Tuple, Union
 import numpy as np
 import json
-from ...utils.logger import setup_logger, handle_exception
-from ...models.requirement import Requirement
-from ...llm.manager import LLMManager
+from ..utils.logger import setup_logger, handle_exception
+from ..models.requirement import Requirement
+from ..llm.manager import LLMManager
 from .requirements_prompt_manager import RequirementsPromptManager
 from redisvl.index import AsyncSearchIndex
 from redisvl.query import VectorQuery

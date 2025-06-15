@@ -20,7 +20,7 @@ Components:
 import os
 from dotenv import load_dotenv
 from typing import Optional
-from ...utils.logger import setup_logger, handle_exception
+from ..utils.logger import setup_logger, handle_exception
 import logging
 
 # Set up logger with debug level

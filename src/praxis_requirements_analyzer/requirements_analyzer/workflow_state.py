@@ -22,7 +22,7 @@ Example:
 
 from typing import List, Dict, Any, Optional
 from pydantic import BaseModel
-from ...neo4j.requirements_client import Requirement
+from ..neo4j.requirements_client import Requirement
 
 class RequirementMatch(BaseModel):
     """
