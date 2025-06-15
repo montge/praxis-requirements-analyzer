@@ -1,0 +1,171 @@
+% Standalone LaTeX template for legal landscape Jupyter notebook export
+% This template is designed for 8.5x14 landscape format
+
+\documentclass[11pt]{article}
+
+% Set page geometry for legal size (8.5x14) in landscape
+\usepackage{geometry}
+\geometry{
+    legalpaper,
+    landscape,
+    left=0.75in,
+    right=0.75in,
+    top=0.75in,
+    bottom=0.75in
+}
+
+% Essential packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+
+% For better table formatting in landscape
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{ltablex}
+\usepackage{adjustbox}  % For \adjustimage command
+
+% For page-breakable code blocks
+\usepackage{fancyvrb}
+\usepackage{mdframed}
+
+% Colors for syntax highlighting
+\usepackage{xcolor}
+\definecolor{incolor}{rgb}{0.0, 0.0, 0.5}
+\definecolor{outcolor}{rgb}{0.545, 0.0, 0.0}
+
+% Headers and footers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\today}
+\lhead{Jupyter Notebook Export}
+\cfoot{Page \thepage}
+% Fix header height issue
+\setlength{\headheight}{14pt}
+
+% Better spacing for tables
+\renewcommand{\arraystretch}{1.2}
+
+% Better Unicode support
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX}
+
+% Text wrapping and formatting - allow more flexibility
+\setlength{\emergencystretch}{3em}
+\setlength{\hfuzz}{5pt}
+
+% Better handling of overfull boxes
+\tolerance=9999
+\hbadness=10000
+
+% Document settings
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+
+% Define a simple verbatim environment with 9pt font
+\DefineVerbatimEnvironment{BreakableVerbatim}{Verbatim}{
+    fontsize=\fontsize{9}{10}
+}
+
+% Define a framed environment that can break across pages
+\newmdenv[
+    linecolor=gray!30,
+    linewidth=0.5pt,
+    topline=false,
+    bottomline=false,
+    leftline=true,
+    rightline=false,
+    innerleftmargin=10pt,
+    innerrightmargin=10pt,
+    innertopmargin=5pt,
+    innerbottommargin=5pt,
+    splittopskip=10pt,
+    splitbottomskip=10pt
+]{pagebreakablebox}
+
+\begin{document}
+
+% Title if available
+((* if nb.metadata.get('title', '') *))
+\title{((( nb.metadata.title | escape_latex )))}
+\maketitle
+((* endif *))
+
+% Process all cells
+((* for cell in nb.cells *))
+    ((* if cell.cell_type == 'markdown' *))
+        ((( cell.source | markdown2latex(extra_args=["--top-level-division=section"]) )))
+    ((* elif cell.cell_type == 'code' *))
+        % Only show outputs, not code (since we use --no-input)
+        ((* for output in cell.outputs *))
+            ((* if output.output_type == 'display_data' *))
+                ((* for mimetype in output.data | sort *))
+                    ((* if mimetype == 'text/latex' *))
+                        ((( output.data[mimetype] | strip_files_prefix )))
+                    ((* elif mimetype == 'text/plain' *))
+                        % Use page-breakable environment without minipage restriction
+                        \begin{pagebreakablebox}
+                        {\fontsize{9}{10}\selectfont\ttfamily
+                        \begin{BreakableVerbatim}
+((( output.data[mimetype] )))
+                        \end{BreakableVerbatim}
+                        }
+                        \end{pagebreakablebox}
+                    ((* elif mimetype.startswith('image/') *))
+                        \begin{center}
+                        \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{((( output.metadata.filenames[mimetype] | posix_path )))}
+                        \end{center}
+                    ((* endif *))
+                ((* endfor *))
+            ((* elif output.output_type == 'execute_result' *))
+                ((* for mimetype in output.data | sort *))
+                    ((* if mimetype == 'text/latex' *))
+                        ((( output.data[mimetype] | strip_files_prefix )))
+                    ((* elif mimetype == 'text/plain' *))
+                        % Use page-breakable environment without minipage restriction
+                        \begin{pagebreakablebox}
+                        {\fontsize{9}{10}\selectfont\ttfamily
+                        \begin{BreakableVerbatim}
+((( output.data[mimetype] )))
+                        \end{BreakableVerbatim}
+                        }
+                        \end{pagebreakablebox}
+                    ((* elif mimetype.startswith('image/') *))
+                        \begin{center}
+                        \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{((( output.metadata.filenames[mimetype] | posix_path )))}
+                        \end{center}
+                    ((* endif *))
+                ((* endfor *))
+            ((* elif output.output_type == 'stream' *))
+                % Use page-breakable environment without minipage restriction
+                \begin{pagebreakablebox}
+                {\fontsize{9}{10}\selectfont\ttfamily
+                \begin{BreakableVerbatim}
+((( output.text )))
+                \end{BreakableVerbatim}
+                }
+                \end{pagebreakablebox}
+            ((* elif output.output_type == 'error' *))
+                {\footnotesize
+                \begin{verbatim}
+((( '\n'.join(output.traceback) )))
+                \end{verbatim}
+                }
+            ((* endif *))
+        ((* endfor *))
+    ((* endif *))
+((* endfor *))
+
+\end{document} 
