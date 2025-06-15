@@ -1,6 +1,6 @@
 from typing import Optional
-from neo4j import AsyncGraphDatabase, AsyncDriver
-from ...utils.logger import setup_logger, handle_exception
+from neo4j import GraphDatabase, Driver
+from ..utils.logger import setup_logger, handle_exception
 import json
 from datetime import datetime
 
@@ -8,7 +8,7 @@ logger = setup_logger(__name__)
 
 class Neo4jClient:
     """
-    Neo4j database client for managing async connections and queries
+    Neo4j database client for managing connections and queries
     
     Args:
         uri (str): Neo4j connection URI
@@ -22,44 +22,44 @@ class Neo4jClient:
         self.user = user
         self.password = password
         self.database = database
-        self._driver: Optional[AsyncDriver] = None
+        self._driver: Optional[Driver] = None
         
     @handle_exception("Failed to connect to Neo4j")
-    async def connect(self) -> None:
-        """Establish async connection to Neo4j database"""
+    def connect(self) -> None:
+        """Establish connection to Neo4j database"""
         try:
-            self._driver = AsyncGraphDatabase.driver(
+            self._driver = GraphDatabase.driver(
                 self.uri, 
                 auth=(self.user, self.password)
             )
             # Verify connection
-            await self.verify_connectivity()
+            self.verify_connectivity()
             logger.info(f"Successfully connected to Neo4j at {self.uri}")
         except Exception as e:
             logger.error(f"Failed to connect to Neo4j: {str(e)}")
             raise
             
     @handle_exception("Failed to verify Neo4j connectivity")
-    async def verify_connectivity(self) -> None:
+    def verify_connectivity(self) -> None:
         """Verify database connection is working"""
         if self._driver:
-            await self._driver.verify_connectivity()
+            self._driver.verify_connectivity()
             
     @handle_exception("Failed to close Neo4j connection")
-    async def close(self) -> None:
+    def close(self) -> None:
         """Close the database connection"""
         if self._driver:
-            await self._driver.close()
+            self._driver.close()
             self._driver = None
             logger.info("Neo4j connection closed")
             
     @property
-    def driver(self) -> Optional[AsyncDriver]:
+    def driver(self) -> Optional[Driver]:
         """Get the Neo4j driver instance"""
         return self._driver 
 
     @handle_exception("Failed to store SIFP estimation results")
-    async def store_sifp_results(self, requirement_id: str, model_name: str, project_name: str, estimation_results: dict) -> None:
+    def store_sifp_results(self, requirement_id: str, model_name: str, project_name: str, estimation_results: dict) -> None:
         """
         Store SIFP estimation results as a relationship to the requirement node.
         If a relationship already exists for the given model, it will be updated.
@@ -77,6 +77,9 @@ class Neo4jClient:
         Raises:
             Exception: If storage fails
         """
+        if not self.driver:
+            raise RuntimeError("Neo4j driver not connected. Call connect() first.")
+            
         try:
             # Extract relevant data from estimation results
             actor_analysis = estimation_results.get('actor_analysis', {})
@@ -118,9 +121,9 @@ class Neo4jClient:
             """
             
             # Execute query
-            async with self.driver.session() as session:
-                result = await session.run(query, params)
-                await result.consume()  # Ensure query completes
+            with self.driver.session() as session:
+                result = session.run(query, params)
+                result.consume()  # Ensure query completes
                 logger.debug(f"Stored/Updated SIFP results for requirement {requirement_id} in project {project_name} using model {model_name}")
                 logger.debug(f"SIFP estimation parameters: {params}")
                 
@@ -130,7 +133,7 @@ class Neo4jClient:
             raise 
 
     @handle_exception("Failed to store judge results")
-    async def store_judge_results(self, source_id: str, target_id: str, model_name: str, judgment_results: dict) -> None:
+    def store_judge_results(self, source_id: str, target_id: str, model_name: str, judgment_results: dict) -> None:
         """
         Store requirement judging results as a relationship between source and target requirements.
         Creates or updates a LLM_RESULT_META_JUDGE relationship between requirements.
@@ -147,6 +150,9 @@ class Neo4jClient:
         Raises:
             Exception: If storage fails
         """
+        if not self.driver:
+            raise RuntimeError("Neo4j driver not connected. Call connect() first.")
+            
         try:
             # Prepare query parameters
             params = {
@@ -186,9 +192,9 @@ class Neo4jClient:
             """
             
             # Execute query
-            async with self.driver.session() as session:
-                result = await session.run(query, params)
-                await result.consume()  # Ensure query completes
+            with self.driver.session() as session:
+                result = session.run(query, params)
+                result.consume()  # Ensure query completes
                 logger.debug(f"Stored/Updated judge results for {source_id}->{target_id} using model {model_name}")
                 logger.debug(f"Judge results parameters: {params}")
                 
